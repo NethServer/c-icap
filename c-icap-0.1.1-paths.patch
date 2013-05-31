@@ -1,0 +1,120 @@
+diff -up c_icap-0.1.1/Makefile.am.orig c_icap-0.1.1/Makefile.am
+--- c_icap-0.1.1/Makefile.am.orig	2010-05-29 18:23:07.000000000 +0200
++++ c_icap-0.1.1/Makefile.am	2010-06-02 15:05:29.000000000 +0200
+@@ -3,7 +3,7 @@ PKGLIBDIR=@pkglibdir@
+ SERVICESDIR=$(pkglibdir)/
+ #CONFIGDIR=$(sysconfdir)/
+ DATADIR=$(pkgdatadir)/
+-LOGDIR=$(localstatedir)/log/
++LOGDIR=$(localstatedir)/log/c-icap/
+ SOCKDIR=/var/run/c-icap
+ 
+ DOXYGEN=@doxygen_bin@
+diff -up c_icap-0.1.1/Makefile.in.orig c_icap-0.1.1/Makefile.in
+--- c_icap-0.1.1/Makefile.in.orig	2010-05-29 18:35:40.000000000 +0200
++++ c_icap-0.1.1/Makefile.in	2010-06-02 15:05:51.000000000 +0200
+@@ -337,7 +337,7 @@ PKGLIBDIR = @pkglibdir@
+ SERVICESDIR = $(pkglibdir)/
+ #CONFIGDIR=$(sysconfdir)/
+ DATADIR = $(pkgdatadir)/
+-LOGDIR = $(localstatedir)/log/
++LOGDIR = $(localstatedir)/log/c-icap/
+ SOCKDIR = /var/run/c-icap
+ DOXYGEN = @doxygen_bin@
+ SUBDIRS = . utils modules services tests docs
+diff -up c_icap-0.1.1/c-icap.conf.in.orig c_icap-0.1.1/c-icap.conf.in
+--- c_icap-0.1.1/c-icap.conf.in.orig	2010-05-29 18:23:07.000000000 +0200
++++ c_icap-0.1.1/c-icap.conf.in	2010-06-02 15:02:03.000000000 +0200
+@@ -180,16 +180,16 @@ DebugLevel 1
+ # Description:
+ #	The location of modules
+ # Default:
+-#	ModulesDir @prefix@/lib/c_icap
+-ModulesDir @prefix@/lib/c_icap
++#	ModulesDir @libdir@/c_icap
++ModulesDir @libdir@/c_icap
+ 
+ # TAG: ServicesDir
+ # Format: ServicesDir dir
+ # Description:
+ #	The location of services
+ # Default:
+-#	ServicesDir @prefix@/lib/c_icap
+-ServicesDir @prefix@/lib/c_icap
++#	ServicesDir @libdir@/c_icap
++ServicesDir @libdir@/c_icap
+ 
+ # TAG: TemplateDir
+ # Format: TemplateDir dir
+@@ -199,7 +199,7 @@ ServicesDir @prefix@/lib/c_icap
+ # Default:
+ #	No value
+ # Example:
+-TemplateDir @prefix@/share/c_icap/templates/
++TemplateDir @datadir@/c_icap/templates/
+ 
+ # TAG: TemplateDefaultLanguage
+ # Format: TemplateDefaultLanguage lang
+@@ -221,8 +221,8 @@ TemplateDefaultLanguage en
+ #	for more informations.
+ #	It can be used more than once to use multiple magic files.
+ # Default:
+-#	LoadMagicFile @prefix@/etc/c-icap.magic
+-LoadMagicFile @prefix@/etc/c-icap.magic
++#	LoadMagicFile @sysconfdir@/c-icap.magic
++LoadMagicFile @sysconfdir@/c-icap.magic
+ 
+ # TAG: RemoteProxyUsers
+ # Format: RemoteProxyUsers onoff
+@@ -289,7 +289,7 @@ RemoteProxyUserHeaderEncoded on
+ # Default:
+ #	No value
+ # Example:
+-#	basic_simple_db.UsersDB hash:/usr/local/c-icap/etc/c-icap-users.txt
++#	basic_simple_db.UsersDB hash:@sysconfdir@/c-icap-users.txt
+ 
+ # TAG: GroupSourceByGroup
+ # Format: GroupSourceByGroup LookupTable
+@@ -301,7 +301,7 @@ RemoteProxyUserHeaderEncoded on
+ # Default:
+ #	No set
+ # Example:
+-#	GroupSourceByGroup hash:/usr/local/c-icap/etc/c-icap-groups.txt
++#	GroupSourceByGroup hash:@sysconfdir@/c-icap-groups.txt
+ 
+ # TAG: GroupSourceByUser
+ # Format: GroupSourceByUser LookupTable
+@@ -313,7 +313,7 @@ RemoteProxyUserHeaderEncoded on
+ # Default:
+ #	No set
+ # Example:
+-#	GroupSourceByUser hash:/usr/local/c-icap/etc/c-icap-user-groups.txt
++#	GroupSourceByUser hash:@sysconfdir@/c-icap-user-groups.txt
+ 
+ # TAG: acl
+ # Format: acl name type[{param}] value1 [value2] [...]
+@@ -443,8 +443,8 @@ RemoteProxyUserHeaderEncoded on
+ #	store debugging information, errors and other
+ #	information about the c-icap server.
+ # Default:
+-#	ServerLog @prefix@/var/log/server.log
+-ServerLog @prefix@/var/log/server.log
++#	ServerLog /var/log/c-icap/server.log
++ServerLog /var/log/c-icap/server.log
+ 
+ # TAG: AccessLog
+ # Format: AccessLog LogFile [LogFormat] [[!]acl1] [[!]acl2] [...]
+@@ -456,10 +456,10 @@ ServerLog @prefix@/var/log/server.log
+ #	This directive can be used more than once to specify more than
+ #	one access log files
+ # Default:
+-#	AccessLog @prefix@/var/log/access.log
++#	AccessLog /var/log/c-icap/access.log
+ # Example:
+-#	AccessLog @prefix@/var/log/access.log MyFormat all
+-AccessLog @prefix@/var/log/access.log
++#	AccessLog /var/log/c-icap/access.log MyFormat all
++AccessLog /var/log/c-icap/access.log
+ 
+ # TAG: Logger
+ # Format: Logger LoggerName

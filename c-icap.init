@@ -1,0 +1,149 @@
+#!/bin/bash
+#
+# c-icap          This shell script takes care of starting and stopping
+#                 the ICAP server c-icap.
+#
+# chkconfig: - 89 26
+# description:    c-icap is an implementation of an ICAP server.
+# processname:    c-icap
+# config:         /etc/c-icap/c-icap.conf
+# pidfile:        /var/run/c-icap/c-icap.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 1
+
+# Defines
+DESC="the ICAP server (c-icap)"
+PROG="c-icap"
+EXEC="/usr/sbin/${PROG}"
+LOCK="/var/lock/subsys/${PROG}"
+PIDF="/var/run/${PROG}/${PROG}.pid"
+CONF="/etc/${PROG}/${PROG}.conf"
+CTRL="/var/run/${PROG}/${PROG}.ctl"
+
+# Include config
+if [ -s /etc/sysconfig/${PROG} ]; then
+  . /etc/sysconfig/${PROG}
+fi
+
+# Further defines
+FSMAX="${FSMAX:-1024}"
+RUN_AS="${RUN_AS:-c-icap}"
+ICAP_SHUT="${ICAP_SHUT:-60}"
+
+# Check for binaries and configs
+[ -x ${EXEC} ] || exit 5
+[ -f ${CONF} ] || exit 6
+
+
+start() {
+	# Start daemons.
+	echo -n $"Starting ${DESC}: "
+
+	# Set max. filehandles
+	ulimit -HSn ${FSMAX}
+
+	daemon --user=${RUN_AS} ${EXEC} -f ${CONF} ${OPTIONS}
+	RETVAL=${?}
+
+	[ ${RETVAL} -eq 0 ] && touch ${LOCK}
+	echo
+	return ${RETVAL}
+}
+
+stop() {
+	# Stop daemons.
+	echo -n $"Shutting down ${DESC}: "
+	PID=`pidof -o %PPID ${PROG}`
+	RETVAL=${?}
+
+	[ ${RETVAL} -eq 0 ] && {
+	  [ -p ${CTRL} ] && echo -n "stop" >${CTRL} || kill -TERM ${PID}
+
+	  TIMEOUT=0
+	  while pidof -o %PPID ${PROG} >/dev/null; do
+	    if [ ${TIMEOUT} -ge ${ICAP_SHUT} ]; then
+	      RETVAL=1
+	      break
+	    else
+	      sleep 5 && echo -n "."
+	      TIMEOUT=$((TIMEOUT+5))
+	    fi
+	  done
+
+	  [ ${RETVAL} -eq 0 ] && rm -f ${LOCK}
+	}
+
+	[ ${RETVAL} -eq 0 ] && success $"${PROG} shutdown" || failure $"${PROG} shutdown"
+	echo
+	return ${RETVAL}
+}
+
+restart() {
+	stop
+	sleep 2
+	start
+}
+
+reload() {
+	# Reload config.
+	echo -n $"Reloading ${DESC}: "
+	[ -p ${CTRL} ] && echo -n "reconfigure" >${CTRL} || /bin/false
+	RETVAL=$?
+
+	[ ${RETVAL} -eq 0 ] && success $"${PROG} reload" || failure $"${PROG} reload"
+	echo
+	return ${RETVAL}
+}
+
+force_reload() {
+	restart
+}
+
+rh_status() {
+	status ${PROG}
+}
+
+rh_status_q() {
+	rh_status >/dev/null 2>&1
+}
+
+
+# See how we were called.
+case "${1}" in
+    start)
+	rh_status_q && exit 0
+	${1}
+	;;
+    stop)
+	rh_status_q || exit 0
+	${1} ${2}
+	;;
+    restart)
+	${1}
+	;;
+    reload)
+	rh_status_q || exit 7
+	${1}
+	;;
+    force-reload)
+	force_reload
+	;;
+    status)
+	rh_status
+	;;
+    condrestart|try-restart)
+	rh_status_q || exit 0
+	restart
+	;;
+    *)
+	echo $"Usage: ${PROG} {start|stop|status|restart|try-restart|reload|force-reload}"
+	exit 2
+esac
+exit ${?}

@@ -1,0 +1,6 @@
+/var/log/c-icap/access.log /var/log/c-icap/server.log {
+    copytruncate
+    notifempty
+    missingok
+    delaycompress
+}

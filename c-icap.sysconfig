@@ -1,0 +1,10 @@
+# /etc/sysconfig/c-icap
+#
+# Max. concurrent filehandles
+# FSMAX=1024
+#
+# User to run the daemon as
+# RUN_AS="c-icap"
+#
+# Add extra daemon options here
+# OPTIONS=""
