@@ -1,21 +1,19 @@
 %define modn      c_icap
-%define ver       0.2.5
-
 
 Summary:          An implementation of an ICAP server
 Name:             c-icap
-Version:          %{ver}
-Release:          1%{?dist}%{?pext}
+Version:          0.3.5
+Release:          1%{?dist}
 License:          LGPL
-Group:            System Environment/Daemons
-Source0:          http://downloads.sourceforge.net/project/%{name}/%{name}/%{ver}/%{modn}-%{ver}.tar.gz
+
+Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.3.x/c_icap-%{version}.tar.gz/download
 Source1:          %{name}.init
 Source2:          %{name}.sysconfig
 Source3:          %{name}.logrotate
 Patch0:           %{name}-0.1.1-paths.patch
+
 URL:              http://%{name}.sourceforge.net/
-Buildroot:        %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Vendor:           Tsantilas Christos <chtsanti@users.sourceforge.net>
+
 Requires:         %{name}-libs = %{version}-%{release}
 Requires(pre):    /usr/sbin/groupadd /usr/sbin/useradd
 Requires(post):   /sbin/chkconfig
@@ -79,7 +77,7 @@ The %{name}-progs package contains several commandline tools for %{name}.
 
 
 %prep
-%setup -q -n %{modn}-%{ver}
+%setup -q -n %{modn}-%{version}
 %patch0 -p1
 
 
@@ -222,6 +220,9 @@ fi
 
 
 %changelog
+* Thu May 21 2015 Davide Principi <davide.principi@nethesis.it> - 0.3.5-1
+- Rebuild for 0.3.5 on ns7
+
 * Thu May 30 2013 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 0.2.5
 - Enable large files support
 - New version 0.2.5
