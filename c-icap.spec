@@ -2,11 +2,11 @@
 
 Summary:          An implementation of an ICAP server
 Name:             c-icap
-Version:          0.3.5
+Version:          0.4.2
 Release:          1%{?dist}
 License:          LGPL
 
-Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.3.x/c_icap-%{version}.tar.gz/download
+Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.4.x/c_icap-%{version}.tar.gz/download
 Source1:          %{name}.init
 Source2:          %{name}.sysconfig
 Source3:          %{name}.logrotate
@@ -174,6 +174,7 @@ fi
 %{_libdir}/%{modn}/dnsbl_tables.so
 %{_libdir}/%{modn}/srv_echo.so
 %{_libdir}/%{modn}/sys_logger.so
+%{_libdir}/%{modn}/shared_cache.so
 %{_sbindir}/%{name}
 %{_datadir}/%{modn}
 %{_mandir}/man8/%{name}.8*
@@ -193,6 +194,7 @@ fi
 %{_libdir}/%{modn}/srv_echo.*a
 %{_libdir}/%{modn}/sys_logger.*a
 %{_libdir}/%{modn}/srv_ex206.*a
+%{_libdir}/%{modn}/shared_cache.*a
 %{_mandir}/man8/%{name}-*config.8*
 
 %files ldap
@@ -203,6 +205,7 @@ fi
 %defattr(-,root,root)
 %doc COPYING
 %{_libdir}/libicapapi.so.*
+
 %{_libdir}/%{modn}/srv_ex206.so
 
 %files perl
@@ -220,6 +223,9 @@ fi
 
 
 %changelog
+* Thu May 21 2015 Davide Principi <davide.principi@nethesis.it> - 0.4.2-1
+- Rebuild for 0.4.2 on el7
+
 * Thu May 21 2015 Davide Principi <davide.principi@nethesis.it> - 0.3.5-1
 - Rebuild for 0.3.5 on ns7
 
