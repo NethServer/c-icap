@@ -1,0 +1,11 @@
+[Unit]
+Description=C-ICAP Server
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/sysconfig/c-icap
+ExecStart=/usr/sbin/c-icap $OPTIONS
+
+[Install]
+WantedBy=multi-user.target

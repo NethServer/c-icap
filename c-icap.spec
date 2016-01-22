@@ -7,18 +7,19 @@ Release:          1%{?dist}
 License:          LGPL
 
 Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.4.x/c_icap-%{version}.tar.gz/download
-Source1:          %{name}.init
+Source1:          %{name}.service
 Source2:          %{name}.sysconfig
 Source3:          %{name}.logrotate
+Source4:          %{name}.conf
 Patch0:           %{name}-0.1.1-paths.patch
 
 URL:              http://%{name}.sourceforge.net/
 
 Requires:         %{name}-libs = %{version}-%{release}
-Requires(pre):    /usr/sbin/groupadd /usr/sbin/useradd
-Requires(post):   /sbin/chkconfig
-Requires(preun):  /sbin/chkconfig /sbin/service
-Requires(postun): /sbin/service
+Requires(post):   systemd
+Requires(preun):  systemd
+Requires(postun): systemd
+BuildRequires:    systemd
 BuildRequires:    db4-devel gdbm-devel openldap-devel
 BuildRequires:    zlib-devel perl-devel
 
@@ -38,6 +39,7 @@ Requires:         zlib-devel
 %description      devel
 The %{name}-devel package contains the static libraries and header files
 for developing software using %{name}.
+# RUN_AS="c-icap"
 
 
 %package          ldap
@@ -99,26 +101,26 @@ The %{name}-progs package contains several commandline tools for %{name}.
 
 
 %install
-[ -n "${RPM_BUILD_ROOT}" -a "${RPM_BUILD_ROOT}" != "/" ] && %{__rm} -rf ${RPM_BUILD_ROOT}
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_initrddir}
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_sysconfdir}/{logrotate.d,sysconfig}
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_sbindir}
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_datadir}/%{modn}/{contrib,templates}
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_localstatedir}/log/%{name}
+[ -n "%{buildroot}" -a "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/{logrotate.d,sysconfig}
+%{__mkdir_p} %{buildroot}%{_sbindir}
+%{__mkdir_p} %{buildroot}%{_datadir}/%{modn}/{contrib,templates}
+%{__mkdir_p} %{buildroot}%{_localstatedir}/log/%{name}
 
 %{__make} \
-	DESTDIR=${RPM_BUILD_ROOT} \
+	DESTDIR=%{buildroot} \
 	install
 
-%{__mv}      -f      ${RPM_BUILD_ROOT}%{_bindir}/%{name} ${RPM_BUILD_ROOT}%{_sbindir}
+%{__mv}      -f      %{buildroot}%{_bindir}/%{name} %{buildroot}%{_sbindir}
 
-%{__install} -m 0755 %{SOURCE1}   ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
-%{__install} -m 0644 %{SOURCE2}   ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/%{name}
-%{__install} -m 0644 %{SOURCE3}   ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/%{name}
+%{__install} -m 0644 %{SOURCE2}   %{buildroot}%{_sysconfdir}/sysconfig/%{name}
+%{__install} -m 0644 %{SOURCE3}   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+%{__install} -D -p -m 0644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+%{__install} -D -m 644 %{SOURCE1} %{buildroot}%{_unitdir}/c-icap.service
 
-%{__install} -m 0755 contrib/*.pl ${RPM_BUILD_ROOT}%{_datadir}/%{modn}/contrib
+%{__install} -m 0755 contrib/*.pl %{buildroot}%{_datadir}/%{modn}/contrib
 
-%{__rm}      -f                   ${RPM_BUILD_ROOT}%{_libdir}/lib*.so.{?,??}
+%{__rm}      -f                   %{buildroot}%{_libdir}/lib*.so.{?,??}
 
 
 %pre
@@ -135,28 +137,20 @@ exit 0			# Always pass
 
 
 %post
-/sbin/chkconfig --add %{name}
+%systemd_post c-icap.service
 
 %post libs -p /sbin/ldconfig
 
 
 %preun
-if [ $1 -eq 0 ]; then	# Remove
-  /sbin/service %{name} stop >/dev/null 2>&1
-  /sbin/chkconfig --del %{name}
-fi
+%systemd_preun c-icap.service
 
 
 %postun
-if [ $1 -ge 1 ]; then	# Upgrade
-  /sbin/service %{name} condrestart >/dev/null 2>&1 || :
-fi
+%systemd_postun_with_restart c-icap.service
 
 %postun libs -p /sbin/ldconfig
 
-
-%clean
-[ -n "${RPM_BUILD_ROOT}" -a "${RPM_BUILD_ROOT}" != "/" ] && %{__rm} -rf ${RPM_BUILD_ROOT}
 
 
 %files
@@ -166,9 +160,9 @@ fi
 %attr(640,root,%{name}) %config(noreplace) %{_sysconfdir}/%{name}/*.conf
 %attr(640,root,%{name}) %config(noreplace) %{_sysconfdir}/%{name}/*.magic
 %attr(640,root,%{name}) %{_sysconfdir}/%{name}/*.default
-%{_initrddir}/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%{_unitdir}/c-icap.service 
 %dir %{_libdir}/%{modn}
 %{_libdir}/%{modn}/bdb_tables.so
 %{_libdir}/%{modn}/dnsbl_tables.so
@@ -180,6 +174,7 @@ fi
 %{_mandir}/man8/%{name}.8*
 %attr(750,%{name},%{name}) %dir %{_localstatedir}/log/%{name}
 %attr(750,%{name},%{name}) %dir %{_localstatedir}/run/%{name}
+%{_tmpfilesdir}/c-icap.conf
 
 %files devel
 %defattr(-,root,root)
