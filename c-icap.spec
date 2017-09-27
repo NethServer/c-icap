@@ -2,16 +2,15 @@
 
 Summary:          An implementation of an ICAP server
 Name:             c-icap
-Version:          0.4.2
+Version:          0.5.2
 Release:          1%{?dist}
 License:          LGPL
 
-Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.4.x/c_icap-%{version}.tar.gz/download
+Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.5.x/c_icap-%{version}.tar.gz/download
 Source1:          %{name}.service
 Source2:          %{name}.sysconfig
 Source3:          %{name}.logrotate
 Source4:          %{name}.conf
-Patch0:           %{name}-0.1.1-paths.patch
 
 URL:              http://%{name}.sourceforge.net/
 
@@ -80,7 +79,6 @@ The %{name}-progs package contains several commandline tools for %{name}.
 
 %prep
 %setup -q -n %{modn}-%{version}
-%patch0 -p1
 
 
 %build
@@ -218,6 +216,9 @@ exit 0			# Always pass
 
 
 %changelog
+* Wed Sep 27 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 0.5.2
+- Rebuild for 0.5.2 on el7
+
 * Thu May 21 2015 Davide Principi <davide.principi@nethesis.it> - 0.4.2-1
 - Rebuild for 0.4.2 on el7
 
