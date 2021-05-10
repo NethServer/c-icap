@@ -2,11 +2,11 @@
 
 Summary:          An implementation of an ICAP server
 Name:             c-icap
-Version:          0.5.2
+Version:          0.5.8
 Release:          1%{?dist}
 License:          LGPL
 
-Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.5.x/c_icap-%{version}.tar.gz/download
+Source0:          http://sourceforge.net/projects/c-icap/files/c-icap/0.5.x/c_icap-%{version}.tar.gz
 Source1:          %{name}.service
 Source2:          %{name}.sysconfig
 Source3:          %{name}.logrotate
@@ -160,7 +160,7 @@ exit 0			# Always pass
 %attr(640,root,%{name}) %{_sysconfdir}/%{name}/*.default
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
-%{_unitdir}/c-icap.service 
+%{_unitdir}/c-icap.service
 %dir %{_libdir}/%{modn}
 %{_libdir}/%{modn}/bdb_tables.so
 %{_libdir}/%{modn}/dnsbl_tables.so
@@ -216,6 +216,9 @@ exit 0			# Always pass
 
 
 %changelog
+* Mon May 10 2021 Marco Ebert <marco_ebert@icloud.com> - 0.5.8
+- Rebuild for 0.5.8 on el7
+
 * Wed Sep 27 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 0.5.2
 - Rebuild for 0.5.2 on el7
 
