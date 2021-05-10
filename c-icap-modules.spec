@@ -1,19 +1,19 @@
 # Based on Mageia RPM
 
-Summary:	An ICAP module server coded in C
-Name:		c-icap-modules
-Version:	0.5.5
-Release:	1%{?dist}
-License:	GPL
-Group:		System/Servers
-URL:		http://sourceforge.net/projects/c-icap/
-Source0:        http://downloads.sourceforge.net/project/c-icap/c-icap-modules/0.5.x/c_icap_modules-%{version}.tar.gz
-BuildRequires:	clamav-devel
-BuildRequires:  c-icap-devel
-BuildRequires:  zlib-devel
-BuildRequires:  automake
-BuildRequires:  autoconf
-Requires:	c-icap
+Summary:          An ICAP module server coded in C
+Name:             c-icap-modules
+Version:          0.5.5
+Release:          1%{?dist}
+License:          GPL
+Group:            System/Servers
+URL:              http://sourceforge.net/projects/c-icap/
+Source0:          http://downloads.sourceforge.net/project/c-icap/c-icap-modules/0.5.x/c_icap_modules-%{version}.tar.gz
+BuildRequires:    clamav-devel
+BuildRequires:    c-icap-devel
+BuildRequires:    zlib-devel
+BuildRequires:    automake
+BuildRequires:    autoconf
+Requires:         c-icap
 
 
 %description
@@ -40,8 +40,7 @@ make %{?_smp_mflags}
 # cleanup
 rm -f %{buildroot}%{_libdir}/c_icap/*.*a
 rm -f %{buildroot}%{_libdir}/*.*a
-find %{buildroot} -name c-icap-mods-sguardDB.8 -delete
-#rm %{buildroot}/usr/share/man/man8/c-icap-mods-sguardDB.8
+find %{buildroot} \( -name c-icap-mods-sguardDB -o -name c-icap-mods-sguardDB.8 \) -delete
 
 
 %files
