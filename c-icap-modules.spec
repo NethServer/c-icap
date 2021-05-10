@@ -49,6 +49,8 @@ find %{buildroot} \( -name c-icap-mods-sguardDB -o -name c-icap-mods-sguardDB.8 
 %attr(0755,root,root) %{_libdir}/c_icap/*.so
 %config(noreplace) %{_sysconfdir}/c-icap/virus_scan.conf
 %config(noreplace) %{_sysconfdir}/c-icap/srv_url_check.conf
+%config(noreplace) %{_sysconfdir}/c-icap/clamav_mod.conf
+%config(noreplace) %{_sysconfdir}/c-icap/clamav_mod.conf.default
 %config(noreplace) %{_sysconfdir}/c-icap/clamd_mod.conf
 %config(noreplace) %{_sysconfdir}/c-icap/clamd_mod.conf.default
 %config(noreplace) %{_sysconfdir}/c-icap/srv_content_filtering.conf.default
