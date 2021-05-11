@@ -1,6 +1,7 @@
-/var/log/c-icap/access.log /var/log/c-icap/server.log {
-    copytruncate
-    notifempty
+/var/log/c-icap/*.log {
+    daily
     missingok
-    delaycompress
+    notifempty
+    copytruncate
+    rotate 7
 }

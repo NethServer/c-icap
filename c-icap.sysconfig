@@ -1,4 +1,2 @@
-# /etc/sysconfig/c-icap
-#
-# Add extra daemon options here
+# Options for c-icap daemon.
 OPTIONS="-f /etc/c-icap/c-icap.conf"
